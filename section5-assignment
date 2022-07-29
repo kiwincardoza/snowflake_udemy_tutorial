@@ -1,0 +1,34 @@
+create or replace table EXERCISE_DB.PUBLIC.EMPLOYEES (customer_id int, first_name VARCHAR(50), last_name VARCHAR(50), email VARCHAR(50), age INT, department VARCHAR(50))
+
+create or replace stage STAGES_DB.external_stages.aws_stage_section_5a
+url = 's3://snowflake-assignments-mc/copyoptions/example1';
+
+CREATE OR REPLACE FILE FORMAT EXERCISE_DB.FILE_FORMAT.section_5a_file_format 
+TYPE=csv 
+FIELD_DELIMITER=',' 
+SKIP_HEADER=1;
+
+COPY INTO EXERCISE_DB.PUBLIC.EMPLOYEES
+FROM @STAGES_DB.external_stages.aws_stage_section_5a
+file_format=(FORMAT_NAME=EXERCISE_DB.FILE_FORMAT.section_5a_file_format)
+VALIDATION_MODE=RETURN_ERRORS;
+
+
+COPY INTO EXERCISE_DB.PUBLIC.EMPLOYEES
+FROM @STAGES_DB.external_stages.aws_stage_section_5a
+file_format=(FORMAT_NAME=EXERCISE_DB.FILE_FORMAT.section_5a_file_format) 
+ON_ERROR='CONTINUE';
+
+SELECT * FROM EXERCISE_DB.PUBLIC.EMPLOYEES;
+TRUNCATE TABLE EXERCISE_DB.PUBLIC.EMPLOYEES;
+
+# Section 5 - B
+create or replace stage STAGES_DB.external_stages.aws_stage_section_5b
+url = 's3://snowflake-assignments-mc/copyoptions/example2';
+
+COPY INTO EXERCISE_DB.PUBLIC.EMPLOYEES
+FROM @STAGES_DB.external_stages.aws_stage_section_5b
+file_format=(FORMAT_NAME=EXERCISE_DB.FILE_FORMAT.section_5a_file_format)
+TRUNCATECOLUMNS=TRUE;
+
+
