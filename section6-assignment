@@ -1,0 +1,24 @@
+create or replace stage STAGES_DB.external_stages.aws_stage_section_6a
+url = 's3://snowflake-assignments-mc/unstructureddata/';
+
+CREATE OR REPLACE FILE FORMAT EXERCISE_DB.FILE_FORMAT.section_6a_file_format 
+TYPE = json
+
+CREATE OR REPLACE TABLE EXERCISE_DB.PUBLIC.JSON_RAW (raw variant);
+
+SELECT * FROM EXERCISE_DB.PUBLIC.JSON_RAW;
+
+COPY INTO EXERCISE_DB.PUBLIC.JSON_RAW
+FROM @STAGES_DB.external_stages.aws_stage_section_6a
+file_format=(FORMAT_NAME=EXERCISE_DB.FILE_FORMAT.section_6a_file_format);
+
+
+
+-- SECOND PART
+
+SELECT RAW:first_name AS first_name, 
+RAW:last_name AS last_name, 
+RAW:Skills[0] AS skills_1, 
+RAW:Skills[1] AS skills_2 
+FROM EXERCISE_DB.PUBLIC.JSON_RAW 
+WHERE first_name = 'Florina'; 
