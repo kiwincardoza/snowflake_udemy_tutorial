@@ -1,0 +1,20 @@
+create or replace stage STAGES_DB.external_stages.aws_stage 
+url = 's3://snowflake-assignments-mc/fileformat/';
+
+CREATE OR REPLACE SCHEMA EXERCISE_DB.FILE_FORMAT;
+
+CREATE OR REPLACE FILE FORMAT EXERCISE_DB.FILE_FORMAT.first_file_format 
+TYPE=csv 
+FIELD_DELIMITER='|' 
+SKIP_HEADER=1;
+
+LIST @STAGES_DB.external_stages.aws_stage;
+
+SELECT * FROM EXERCISE_DB.PUBLIC.CUSTOMERS;
+
+COPY INTO EXERCISE_DB.PUBLIC.CUSTOMERS 
+FROM @STAGES_DB.external_stages.aws_stage
+file_format=(FORMAT_NAME=EXERCISE_DB.FILE_FORMAT.first_file_format)
+files=('customers4.csv');
+
+DESC file format EXERCISE_DB.FILE_FORMAT.first_file_format;
